@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { auth, provider } from '../firebase';
 import { signInWithPopup } from 'firebase/auth';
-import { Navigate } from 'react-router-dom';
-import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { loginFailure, loginStart, loginSuccess, logout } from '../redux/userSlice';
 
 const Container = styled.div`
   display: flex;
@@ -75,6 +75,7 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,9 +83,29 @@ const Signin = () => {
     try {
       const res = await axios.post("/auth/signin", {name, password});
       dispatch(loginSuccess(res.data));
+      navigate("/");
     } catch(err) {
       dispatch(loginFailure());
     }
+  };
+
+  const signInWithGoogle = async () => {
+    dispatch(loginStart());
+    await signInWithPopup(auth, provider)
+    .then((response) => {
+      axios.post("/auth/google", {
+        name: response.user.displayName,
+        email: response.user.email,
+        img: response.user.photoURL   
+      })
+      .then((res) => {
+        dispatch(loginSuccess(res.data));
+        navigate("/");
+      })
+    })
+    .catch((err) => {
+      dispatch(loginFailure());
+    });
   };
 
   return (
@@ -96,7 +117,7 @@ const Signin = () => {
         <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} />
         <Button onClick={handleLogin} >Sign in</Button>
         <Title>or</Title>
-        <Button>Signin with Google</Button>
+        <Button onClick={signInWithGoogle} >Signin with Google</Button>
         <Title>or</Title>
         <Input placeholder="username" onChange={(e) => setName(e.target.value)} />
         <Input placeholder="email" onChange={(e) => setEmail(e.target.value)} />

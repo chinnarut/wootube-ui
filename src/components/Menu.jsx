@@ -1,9 +1,10 @@
-import { AccountCircleOutlined, ArticleOutlined, ExploreOutlined, FlagOutlined, HelpOutlineOutlined, HistoryOutlined, Home, LibraryMusicOutlined, LiveTvOutlined, MovieOutlined, SettingsBrightnessOutlined, SettingsOutlined, SportsBasketballOutlined, SportsEsportsOutlined, SubscriptionsOutlined, VideoLibraryOutlined } from '@mui/icons-material';
+import { AccountCircleOutlined, ArticleOutlined, ExploreOutlined, FlagOutlined, HelpOutlineOutlined, HistoryOutlined, Home, LibraryMusicOutlined, LiveTvOutlined, LogoutOutlined, MovieOutlined, SettingsBrightnessOutlined, SettingsOutlined, SportsBasketballOutlined, SportsEsportsOutlined, SubscriptionsOutlined, VideoLibraryOutlined } from '@mui/icons-material';
 import React from 'react'
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components'
 import logo from "../img/logo.png";
+import { logout } from '../redux/userSlice';
 
 const Container = styled.div`
   flex: 1;
@@ -49,7 +50,7 @@ const Hr = styled.hr`
 `;
 
 const Login = styled.div`
-  /* color: ${({theme}) => theme.text}; */
+  color: ${({theme}) => theme.text};
 `;
 
 const Button = styled.button`
@@ -75,6 +76,13 @@ const Title = styled.h2`
 
 const Menu = ({darkMode, setDarkMode}) => {
   const {currentUser} = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  }
 
   return (
     <Container>
@@ -113,44 +121,58 @@ const Menu = ({darkMode, setDarkMode}) => {
           History
         </Item>
         <Hr />
-          {!currentUser && (
-            <>
-            <Login>
-              Sign in Here!.
-              <Link to="/signin" style={{textDecoration: "none"}}>
-                <Button><AccountCircleOutlined /> SIGN IN</Button>
-              </Link>
-            </Login>
-          <Hr />
-            </>
-          )}
+          {!currentUser 
+            ? (<Login>
+                Sign in Here!.
+                <Link to="/signin" style={{textDecoration: "none"}}>
+                  <Button><AccountCircleOutlined /> SIGN IN</Button>
+                </Link>
+              </Login>)
+            : (<Login>
+                Logout Here!.
+                <Button onClick={handleLogout} ><LogoutOutlined /> Logout</Button>
+              </Login>)
+          }
+        <Hr />
         <Title>
           More of WooTube
         </Title>
-        <Item>
-          <LibraryMusicOutlined />
-          Music
-        </Item>
-        <Item>
-          <SportsBasketballOutlined />
-          Sports
-        </Item>
-        <Item>
-          <SportsEsportsOutlined />
-          Gaming
-        </Item>
-        <Item>
-          <MovieOutlined />
-          Movies
-        </Item>
-        <Item>
-          <ArticleOutlined />
-          News
-        </Item>
-        <Item>
-          <LiveTvOutlined />
-          Live
-        </Item>
+        <Link  to="/music" style={{textDecoration: "none", color: "inherit"}}>
+          <Item>
+            <LibraryMusicOutlined />
+            Music
+          </Item>
+        </Link>
+        <Link to="/sports" style={{textDecoration: "none", color: "inherit"}} >
+          <Item>
+            <SportsBasketballOutlined />
+            Sports
+          </Item>
+        </Link>
+        <Link to="/gaming" style={{textDecoration: "none", color: "inherit"}} >
+          <Item>
+            <SportsEsportsOutlined />
+            Gaming
+          </Item>
+        </Link>
+        <Link to="/movies" style={{textDecoration: "none", color: "inherit"}} >
+          <Item>
+            <MovieOutlined />
+            Movies
+          </Item>
+        </Link>
+        <Link to="/news" style={{textDecoration: "none", color: "inherit"}} >
+          <Item>
+            <ArticleOutlined />
+            News
+          </Item>
+        </Link>
+        <Link to="/live" style={{textDecoration: "none", color: "inherit"}} >
+          <Item>
+            <LiveTvOutlined />
+            Live
+          </Item>
+        </Link>
         <Hr />
         <Item>
           <SettingsOutlined />

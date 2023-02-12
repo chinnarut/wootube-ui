@@ -1,5 +1,9 @@
+import axios from 'axios';
 import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
+import { format } from "timeago.js";
 
 const Container = styled.div`
   display: flex;
@@ -36,16 +40,28 @@ const Text = styled.span`
   font-size: 14px;
 `;
 
-const Comment = () => {
+const Comment = ({comment}) => {
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      const res = await axios.get(`/users/find/${comment.userId}`);
+      
+      setChannel(res.data);
+    }
+
+    fetchComments()
+  }, [comment.userId]);
+
   return (
     <Container>
-      <Avatar src="https://cdn-icons-png.flaticon.com/128/9207/9207930.png" />
+      <Avatar src={channel.img} />
       <Details>
         <Name>
-          John Doe <Date>1 day ago</Date>
+          {channel.name} <Date>{format(channel.createdAt)}</Date>
         </Name>
         <Text>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, laboriosam ipsam aliquam voluptatem perferendis provident modi, se?
+          {comment?.desc}
         </Text>
       </Details>
     </Container>

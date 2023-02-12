@@ -1,10 +1,10 @@
 import { AccountCircleOutlined, SearchOutlined, VideoCallOutlined } from '@mui/icons-material';
-import { Avatar } from '@mui/material';
-import { current } from '@reduxjs/toolkit';
-import React from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Upload from './Upload';
+import UploadImage from './UploadImage';
 
 const Container = styled.div`
   position: sticky;
@@ -45,6 +45,13 @@ const User = styled.div`
   color: ${({theme}) => theme.text};
 `;
 
+const Avatar = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #999;
+`;
+
 const Input = styled.input`
   border: none;
   outline: none;
@@ -66,31 +73,39 @@ const Button = styled.button`
 `;
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const {currentUser} = useSelector(state => state.user);
+  const [open, setOpen] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
+  const [q, setQ] = useState("");
   
   return (
-    <Container>
-      <Wrapper>
-        <Search>
-          <Input placeholder="Search" />
-          <SearchOutlined />
-        </Search>
-        {currentUser ? (
-          <User>
-            <VideoCallOutlined style={{cursor: "pointer"}} />
-            <Avatar style={{cursor: "pointer"}} />
-            {currentUser.name}
-          </User>
-        ) : (
-          <Link to="/signin" style={{textDecoration: "none"}}>
-            <Button>
-              <AccountCircleOutlined /> 
-              SIGN IN
-            </Button>
-          </Link>
-        )}
-      </Wrapper>
-    </Container>
+    <>
+      <Container>
+        <Wrapper>
+          <Search>
+            <Input placeholder="Search" onChange={(e) => setQ(e.target.value)} />
+            <SearchOutlined onClick={() => navigate(`/search?q=${q}`)} />
+          </Search>
+          {currentUser ? (
+            <User>
+              <VideoCallOutlined style={{cursor: "pointer"}} onClick={() => setOpen(true)} />
+              <Avatar src={currentUser.img} style={{cursor: "pointer"}} onClick={() => setOpenProfile(true)} />
+              {currentUser.name}
+            </User>
+          ) : (
+            <Link to="/signin" style={{textDecoration: "none"}}>
+              <Button>
+                <AccountCircleOutlined /> 
+                SIGN IN
+              </Button>
+            </Link>
+          )}
+        </Wrapper>
+      </Container>
+      {open && <Upload setOpen={setOpen} />}
+      {openProfile && <UploadImage setOpenProfile={setOpenProfile} />}
+    </>
   )
 }
 

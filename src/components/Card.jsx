@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { format } from "timeago.js";
@@ -58,6 +59,7 @@ const Info = styled.div`
 
 const Card = ({type, video}) => {
   const [channel, setChannel] = useState({});
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -67,10 +69,9 @@ const Card = ({type, video}) => {
 
     fetchChannel();
   }, [video.userId]);
-  console.log(channel)
 
   return (
-    <Link to="/video/test" style={{ textDecoration: "none" }}>
+    <Link to={currentUser ? `/video/${video._id}` : "/"} style={{ textDecoration: "none" }}>
       <Container type={type}>
         <Image
           type={type}

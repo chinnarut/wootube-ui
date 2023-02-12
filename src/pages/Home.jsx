@@ -16,8 +16,28 @@ const Home = ({type}) => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(`/videos/${type}`);
-      setVideos(res.data);
+      if(type === "music") {
+        const resMusic = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resMusic?.data);
+      } else if(type === "sports") {
+        const resSports = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resSports?.data);
+      } else if(type === "gaming") {
+        const resGaming = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resGaming?.data);
+      } else if(type === "movies") {
+        const resMovies = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resMovies?.data);
+      } else if(type === "news") {
+        const resNews = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resNews?.data);
+      } else if(type === "live") {
+        const resLive = await axios.get(`/videos/tags?tags=${type}`);
+        setVideos(resLive?.data);
+      } else {
+        const resType = await axios.get(`/videos/${type}`);
+        setVideos(resType?.data);
+      }      
     };
 
     fetchVideos();
